@@ -178,9 +178,9 @@ def generate_pdf(df, output_filename):
     c.save()
 
 
-def process_csv():
+def process_csv(file_path):
     # Read CSV file
-    df = pd.read_csv("~/Downloads/Informe.csv")
+    df = pd.read_csv(file_path)
     df["Fecha"] = pd.to_datetime(df["Fecha"], format="%d/%m/%Y")
     df = df.sort_values(by=["Fecha"], ascending=True)
 
@@ -196,3 +196,5 @@ def process_csv():
     # Generate PDF for the entire CSV
     output_filename = "./informe.pdf"
     generate_pdf(df, output_filename)
+
+    return output_filename
