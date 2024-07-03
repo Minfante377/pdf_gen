@@ -75,16 +75,16 @@ def generate_pdf(df, output_filename):
     )
 
     # Body Composition
-    box_height = 120
-    draw_box(c, 50, height - 420, width - 100, box_height)
+    box_height = 150
+    draw_box(c, 50, height - 460, width - 100, box_height)
     c.setFont("Helvetica-Bold", 14)
-    c.drawString(60, height - 300, "Composición Corporal")
+    c.drawString(60, height - 330, "Composición Corporal")
     c.setFont("Helvetica", 12)
-    c.drawString(60, height - 300, f"Agua Corporal: {df['Agua (%)'].iloc[-1]}%")
-    c.drawString(60, height - 320, f"Grasa Visceral: {df['GV'].iloc[-1]}")
-    c.drawString(60, height - 360, f"Masa Ósea: {df['MO'].iloc[-1]} kg")
-    c.drawString(60, height - 380, f"IMC: {df['IMC'].iloc[-1]}")
-    c.drawString(60, height - 400, f"Grasa Actual: {df['Grasa Actual (%)'].iloc[-1]}%")
+    c.drawString(60, height - 350, f"Agua Corporal: {df['Agua (%)'].iloc[-1]}%")
+    c.drawString(60, height - 370, f"Grasa Visceral: {df['GV'].iloc[-1]}%")
+    c.drawString(60, height - 390, f"Masa Ósea: {df['MO'].iloc[-1]} kg")
+    c.drawString(60, height - 410, f"IMC: {df['IMC'].iloc[-1]}")
+    c.drawString(60, height - 430, f"Grasa Actual: {df['Grasa Actual (%)'].iloc[0]}%")
 
     # Add Graphs
     def add_plot_to_pdf(c, plot_func, x, y, width, height):
@@ -161,14 +161,16 @@ def generate_pdf(df, output_filename):
     # Adjusted positions for multiple graphs
     graph_y_grasa = height - 600
     graph_y_peso = height - 600
-    graph_y_masa = height - 750
-    graph_y_pie = height - 750
-    graph_y_agua = height - 850
+    graph_y_masa = height - 720
+    graph_y_pie = height - 720
+    graph_y_agua = height - 840
 
     add_plot_to_pdf(c, plot_grasa, graph_x, graph_y_grasa, graph_width, graph_height)
     add_plot_to_pdf(c, plot_peso, width - 300, graph_y_peso, graph_width, graph_height)
     add_plot_to_pdf(c, plot_masa, graph_x, graph_y_masa, graph_width, graph_height)
-    add_plot_to_pdf(c, plot_pie, width - 300, graph_y_pie, graph_width, graph_height)
+    add_plot_to_pdf(
+        c, plot_pie, width - 240, graph_y_pie, graph_width - 80, graph_height
+    )
     add_plot_to_pdf(c, plot_agua, graph_x, graph_y_agua, graph_width, graph_height)
 
     # Save the PDF
@@ -176,7 +178,7 @@ def generate_pdf(df, output_filename):
     c.save()
 
 
-def main():
+def process_csv():
     # Read CSV file
     df = pd.read_csv("~/Downloads/Informe.csv")
     df["Fecha"] = pd.to_datetime(df["Fecha"], format="%d/%m/%Y")
@@ -194,7 +196,3 @@ def main():
     # Generate PDF for the entire CSV
     output_filename = "./informe.pdf"
     generate_pdf(df, output_filename)
-
-
-if __name__ == "__main__":
-    main()
