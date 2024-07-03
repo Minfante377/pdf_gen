@@ -1,0 +1,6 @@
+__pycache__/
+*.swp
+*.swa
+auth.txt
+secret.txt
+*.pdf
