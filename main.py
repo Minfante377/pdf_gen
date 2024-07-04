@@ -58,7 +58,7 @@ def load_user(user_id: str):
 # Protected endpoint example
 @app.post("/uploadfile/")
 def create_upload_file(file: UploadFile = File(...), username: str = Depends(manager)):
-    file_location = f"./files/{file.filename}"
+    file_location = f"/tmp/{file.filename}"
     with open(file_location, "wb+") as f:
         f.write(file.file.read())
 
