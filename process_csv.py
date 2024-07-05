@@ -54,6 +54,30 @@ WATER = {
     "45": "Bajo",
     "1000": "Normal",
 }
+FAT_YOUNG_WOMEN = {
+    "21": "Bajo",
+    "33": "Saludable",
+    "39": "Sobrepeso",
+    "1000": "Obesidad",
+}
+FAT_OLD_WOMEN = {
+    "24": "Bajo",
+    "36": "Saludable",
+    "42": "Sobrepeso",
+    "1000": "Obesidad",
+}
+FAT_YOUNG_MEN = {
+    "8": "Bajo",
+    "20": "Saludable",
+    "25": "Sobrepeso",
+    "1000": "Obesidad",
+}
+FAT_OLD_MEN = {
+    "13": "Bajo",
+    "25": "Saludable",
+    "30": "Sobrepeso",
+    "1000": "Obesidad",
+}
 
 
 def get_classification(value: float, reference: dict) -> str:
@@ -155,7 +179,25 @@ def generate_pdf(df, output_filename):
     diff_fat = round(diff_fat, 1)
     diff_fat_last = df["Grasa(%)"].iloc[-1] - df["Grasa(%)"].iloc[-2]
     diff_fat_last = round(diff_fat_last, 1)
-    data.append(["Grasa (%)", df["Grasa(%)"].iloc[-1], diff_fat_last, diff_fat, ""])
+    if df["Genero"].iloc[0] == "M" and df["Edad"].iloc[0] < 60:
+        fat_classification = get_classification(df["Grasa(%)"].iloc[-1], FAT_YOUNG_MEN)
+    elif df["Genero"].iloc[0] == "M" and df["Edad"].iloc[0] > 59:
+        fat_classification = get_classification(df["Grasa(%)"].iloc[-1], FAT_OLD_MEN)
+    elif df["Genero"].iloc[0] == "F" and df["Edad"].iloc[0] > 59:
+        fat_classification = get_classification(df["Grasa(%)"].iloc[-1], FAT_OLD_WOMEN)
+    else:
+        fat_classification = get_classification(
+            df["Grasa(%)"].iloc[-1], FAT_YOUNG_WOMEN
+        )
+    data.append(
+        [
+            "Grasa (%)",
+            df["Grasa(%)"].iloc[-1],
+            diff_fat_last,
+            diff_fat,
+            fat_classification,
+        ]
+    )
 
     diff_cc = df["CC"].iloc[-1] - df["CC"].iloc[0]
     diff_cc = round(diff_cc, 1)
