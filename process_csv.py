@@ -268,7 +268,7 @@ def generate_pdf(df, output_filename):
         plt.figure(figsize=(8, 8))
         plt.pie(sizes, labels=labels, colors=colors, autopct="%1.1f%%", startangle=140)
         plt.axis("equal")
-        plt.title("Último Masa Magra (%) vs Grasa(%)")
+        plt.title("Masa Magra (%) vs Grasa(%)")
         plt.tight_layout()
         plt.savefig(buffer, format="png")
         plt.close()
