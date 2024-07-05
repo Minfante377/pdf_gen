@@ -71,24 +71,47 @@ def generate_pdf(df, output_filename):
     draw_box(c, 50, height - 390, width - 100, box_height)
     c.setFont("Helvetica-Bold", 12)
     c.drawString(60, height - 200, "Resumen de las Evaluaciones")
-    c.drawString(
-        60,
-        height - 220,
-        "Indicador                      Actual    Ultimo    General"
-        "     Clasificacion",
-    )
+    headers = ["Indicador", "Actual", "Ultimo", "General", "Clasificacion"]
+    x = 60
+    y = height - 220
+    coor_x = [x]
+    for header in headers:
+        c.drawString(x, y, header)
+        x += 80
+        coor_x.append(x)
+    y -= 20
+
     c.setFont("Helvetica", 12)
+    data = []
     diff_weight = df["Peso Corporal (Kg)"].iloc[-1] - df["Peso Corporal (Kg)"].iloc[0]
     diff_weight = round(diff_weight, 1)
     diff_weight_last = (
         df["Peso Corporal (Kg)"].iloc[-1] - df["Peso Corporal (Kg)"].iloc[-2]
     )
     diff_weight_last = round(diff_weight_last, 1)
+    data.append(
+        [
+            "Peso (Kg)",
+            df["Peso Corporal (Kg)"].iloc[-1],
+            diff_weight_last,
+            diff_weight,
+            "",
+        ]
+    )
 
     diff_muscle = df["Masa Muscular (Kg)"].iloc[-1] - df["Masa Muscular (Kg)"].iloc[0]
     diff_muscle = round(diff_muscle, 1)
     diff_muscle_last = (
         df["Masa Muscular (Kg)"].iloc[-1] - df["Masa Muscular (Kg)"].iloc[-2]
+    )
+    data.append(
+        [
+            "MM (Kg)",
+            df["Masa Muscular (Kg)"].iloc[-1],
+            diff_muscle_last,
+            diff_muscle,
+            "",
+        ]
     )
 
     diff_muscle_last = round(diff_muscle_last, 1)
@@ -96,6 +119,7 @@ def generate_pdf(df, output_filename):
     diff_fat = round(diff_fat, 1)
     diff_fat_last = df["Grasa(%)"].iloc[-1] - df["Grasa(%)"].iloc[-2]
     diff_fat_last = round(diff_fat_last, 1)
+    data.append(["Grasa (%)", df["Grasa(%)"].iloc[-1], diff_fat_last, diff_fat, ""])
 
     diff_cc = df["CC"].iloc[-1] - df["CC"].iloc[0]
     diff_cc = round(diff_cc, 1)
@@ -105,17 +129,30 @@ def generate_pdf(df, output_filename):
         cc_classification = get_classification(df["CC"].iloc[-1], CC_MEN)
     else:
         cc_classification = get_classification(df["CC"].iloc[-1], CC_WOMEN)
+    data.append(
+        ["CC (cm)", df["CC"].iloc[-1], diff_cc_last, diff_cc, cc_classification]
+    )
 
     diff_cca = df["CCA"].iloc[-1] - df["CCA"].iloc[0]
     diff_cca = round(diff_cca, 1)
     diff_cca_last = df["CCA"].iloc[-1] - df["CCA"].iloc[-2]
     diff_cca_last = round(diff_cca_last, 1)
+    data.append(["CCA (cm)", df["CCA"].iloc[-1], diff_cca_last, diff_cca, ""])
 
     diff_visceral_fat = df["GV"].iloc[-1] - df["GV"].iloc[0]
     diff_visceral_fat = round(diff_visceral_fat, 1)
     diff_visceral_fat_last = df["GV"].iloc[-1] - df["GV"].iloc[-2]
     diff_visceral_fat_last = round(diff_visceral_fat_last, 1)
     visceral_fat_classification = get_classification(df["GV"].iloc[-1], GRASA_VISCERAL)
+    data.append(
+        [
+            "GV (%)",
+            df["GV"].iloc[-1],
+            diff_visceral_fat_last,
+            diff_visceral_fat,
+            visceral_fat_classification,
+        ]
+    )
 
     diff_imc = df["IMC"].iloc[-1] - df["IMC"].iloc[0]
     diff_imc = round(diff_imc, 1)
@@ -125,71 +162,24 @@ def generate_pdf(df, output_filename):
         imc_classification = get_classification(df["IMC"].iloc[-1], IMC_ADULT)
     else:
         imc_classification = get_classification(df["IMC"].iloc[-1], IMC_OLD)
+    data.append(
+        ["IMC", df["IMC"].iloc[-1], diff_imc_last, diff_imc, imc_classification]
+    )
 
     diff_water = df["Agua (%)"].iloc[-1] - df["Agua (%)"].iloc[0]
     diff_water = round(diff_water, 1)
     diff_water_last = df["Agua (%)"].iloc[-1] - df["Agua (%)"].iloc[-2]
     diff_water_last = round(diff_water_last, 1)
+    data.append(["Agua (%)", df["Agua (%)"].iloc[-1], diff_water_last, diff_water, ""])
 
-    c.drawString(
-        60,
-        height - 240,
-        f"Peso Corporal                     {df['Peso Corporal (Kg)'].iloc[-1]}kg    "
-        f"{f'+{diff_weight_last}' if diff_weight_last > 0 else diff_weight_last}kg    "
-        f"{f'+{diff_weight}' if diff_weight > 0 else diff_weight}kg",
-    )
-    c.drawString(
-        60,
-        height - 260,
-        f"Grasa (%)                          {df['Grasa(%)'].iloc[-1]}%     "
-        f"{f'+{diff_fat_last}' if diff_fat_last > 0 else diff_fat_last}%     "
-        f"{f'+{diff_fat}' if diff_fat > 0 else diff_fat}%",
-    )
-    c.drawString(
-        60,
-        height - 280,
-        f"Agua (%)                              {df['Agua (%)'].iloc[-1]}%     "
-        f"{f'+{diff_water_last}' if diff_water_last > 0 else diff_water_last}%     "
-        f"{f'+{diff_water}' if diff_water > 0 else diff_water}%",
-    )
-    c.drawString(
-        60,
-        height - 300,
-        f"Masa Muscular                      {df['Masa Muscular (Kg)'].iloc[-1]}kg    "
-        f"{f'+{diff_muscle_last}' if diff_muscle_last > 0 else diff_muscle_last}kg    "
-        f"{f'+{diff_muscle}' if diff_muscle > 0 else diff_muscle}kg",
-    )
-    c.drawString(
-        60,
-        height - 320,
-        f"Circunferencia de Cintura          {df['CC'].iloc[-1]}cm    "
-        f"{f'+{diff_cc_last}' if diff_cc_last > 0 else diff_cc_last}cm    "
-        f"{f'+{diff_cc}' if diff_cc > 0 else diff_cc}cm",
-    )
-    c.drawString(
-        60,
-        height - 340,
-        f"Circunferencia de Cadera      {df['CCA'].iloc[-1]}cm    "
-        f"{f'+{diff_cca_last}' if diff_cca_last > 0 else diff_cca_last}cm    "
-        f"{f'+{diff_cca}' if diff_cca > 0 else diff_cca}cm"
-        f"            {cc_classification}",
-    )
-    c.drawString(
-        60,
-        height - 360,
-        f"Grasa Visceral(%)                   {df['GV'].iloc[-1]}%    "
-        f"{f'+{diff_visceral_fat_last}' if diff_visceral_fat_last > 0 else diff_visceral_fat_last}%    "
-        f"{f'+{diff_visceral_fat}' if diff_visceral_fat > 0 else diff_visceral_fat}%"
-        f"            {visceral_fat_classification}",
-    )
-    c.drawString(
-        60,
-        height - 380,
-        f"IMC                                 {df['IMC'].iloc[-1]}    "
-        f"{f'+{diff_imc_last}' if diff_imc_last > 0 else diff_imc_last}    "
-        f"{f'+{diff_imc}' if diff_imc > 0 else diff_imc}"
-        f"            {imc_classification}",
-    )
+    for d in data:
+        for i in range(0, len(d)):
+            c.drawString(
+                coor_x[i],
+                y,
+                str(d[i]),
+            )
+        y -= 20
 
     # Add Graphs
     def add_plot_to_pdf(c, plot_func, x, y, width, height):
