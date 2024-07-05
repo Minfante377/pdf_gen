@@ -96,6 +96,11 @@ def generate_pdf(df, output_filename):
 
     c.setFont("Helvetica", 12)
     data = []
+    diff_days = df["Fecha"].iloc[-1] - df["Fecha"].iloc[0]
+    diff_days_last = df["Fecha"].iloc[-1] - df["Fecha"].iloc[-2]
+    data.append(
+        ["Tiempo", "", f"{diff_days_last.days} dias", f"{diff_days.days} dias", ""]
+    )
     diff_weight = df["Peso Corporal (Kg)"].iloc[-1] - df["Peso Corporal (Kg)"].iloc[0]
     diff_weight = round(diff_weight, 1)
     diff_weight_last = (
