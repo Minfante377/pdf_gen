@@ -16,6 +16,9 @@ plt.rcParams.update(
         "axes.labelsize": 12,
         "xtick.labelsize": 10,
         "ytick.labelsize": 10,
+        "axes.grid": True,
+        "axes.edgecolor": "0.15",
+        "axes.linewidth": 1.25,
     }
 )
 
@@ -46,6 +49,10 @@ CC_WOMEN = {
     "82": "Normal",
     "88": "Riesgo Elevado",
     "1000": "Riesgo Muy Elevado",
+}
+WATER = {
+    "45": "Bajo",
+    "1000": "Normal",
 }
 
 
@@ -103,6 +110,15 @@ def generate_pdf(df, output_filename):
         ["Tiempo", "", f"{diff_days_last.days} dias", f"{diff_days.days} dias", ""]
     )
 
+    diff_imc = df["IMC"].iloc[-1] - df["IMC"].iloc[0]
+    diff_imc = round(diff_imc, 1)
+    diff_imc_last = df["IMC"].iloc[-1] - df["IMC"].iloc[-2]
+    diff_imc_last = round(diff_imc_last, 1)
+    if df["Edad"].iloc[0] < 60:
+        imc_classification = get_classification(df["IMC"].iloc[-1], IMC_ADULT)
+    else:
+        imc_classification = get_classification(df["IMC"].iloc[-1], IMC_OLD)
+
     diff_weight = df["Peso Corporal (Kg)"].iloc[-1] - df["Peso Corporal (Kg)"].iloc[0]
     diff_weight = round(diff_weight, 1)
     diff_weight_last = (
@@ -115,7 +131,7 @@ def generate_pdf(df, output_filename):
             df["Peso Corporal (Kg)"].iloc[-1],
             diff_weight_last,
             diff_weight,
-            "",
+            imc_classification,
         ]
     )
 
@@ -174,14 +190,6 @@ def generate_pdf(df, output_filename):
         ]
     )
 
-    diff_imc = df["IMC"].iloc[-1] - df["IMC"].iloc[0]
-    diff_imc = round(diff_imc, 1)
-    diff_imc_last = df["IMC"].iloc[-1] - df["IMC"].iloc[-2]
-    diff_imc_last = round(diff_imc_last, 1)
-    if df["Edad"].iloc[0] < 60:
-        imc_classification = get_classification(df["IMC"].iloc[-1], IMC_ADULT)
-    else:
-        imc_classification = get_classification(df["IMC"].iloc[-1], IMC_OLD)
     data.append(
         ["IMC", df["IMC"].iloc[-1], diff_imc_last, diff_imc, imc_classification]
     )
@@ -190,7 +198,16 @@ def generate_pdf(df, output_filename):
     diff_water = round(diff_water, 1)
     diff_water_last = df["Agua (%)"].iloc[-1] - df["Agua (%)"].iloc[-2]
     diff_water_last = round(diff_water_last, 1)
-    data.append(["Agua (%)", df["Agua (%)"].iloc[-1], diff_water_last, diff_water, ""])
+    water_classification = get_classification(df["Agua (%)"].iloc[-1], WATER)
+    data.append(
+        [
+            "Agua (%)",
+            df["Agua (%)"].iloc[-1],
+            diff_water_last,
+            diff_water,
+            water_classification,
+        ]
+    )
 
     count = 0
     for d in data:
@@ -254,13 +271,12 @@ def generate_pdf(df, output_filename):
             color="tab:orange",
             linewidth=2,
         )
-        plt.plot(
+        plt.bar(
             df["Fecha"],
             df["Grasa(%)"],
             label="Grasa(%)",
-            marker="o",
             color="tab:blue",
-            linewidth=2,
+            width=8,
         )
         plt.title("Masa Magra (%) y Grasa(%)")
         plt.xlabel("Fecha")
@@ -277,7 +293,14 @@ def generate_pdf(df, output_filename):
         sizes = [df["Masa Magra (%)"].iloc[-1], df["Grasa(%)"].iloc[-1]]
         colors = sns.color_palette("pastel")
         plt.figure(figsize=(8, 8))
-        plt.pie(sizes, labels=labels, colors=colors, autopct="%1.1f%%", startangle=140)
+        plt.pie(
+            sizes,
+            labels=labels,
+            colors=colors,
+            autopct="%1.1f%%",
+            startangle=140,
+            wedgeprops={"edgecolor": "black", "linewidth": 3, "antialiased": True},
+        )
         plt.axis("equal")
         plt.title("Masa Magra (%) vs Grasa(%)")
         plt.tight_layout()
@@ -311,7 +334,7 @@ def generate_pdf(df, output_filename):
     add_plot_to_pdf(c, plot_grasa, graph_x, graph_y_grasa, graph_width, graph_height)
     add_plot_to_pdf(c, plot_peso, width - 300, graph_y_peso, graph_width, graph_height)
     add_plot_to_pdf(c, plot_masa, graph_x, graph_y_masa, graph_width, graph_height)
-    add_plot_to_pdf(c, plot_pie, width - 220, graph_y_pie, 150, 150)
+    add_plot_to_pdf(c, plot_pie, width - 250, graph_y_pie, 150, 150)
     add_plot_to_pdf(c, plot_agua, graph_x, graph_y_agua, graph_width, graph_height)
 
     # Save the PDF
