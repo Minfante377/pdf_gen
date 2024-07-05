@@ -80,8 +80,8 @@ def generate_pdf(df, output_filename):
     c.drawString(60, height - 150, f"Altura: {df['Altura'].iloc[0]} cm")
 
     # Evaluation Summary
-    box_height = 210
-    draw_box(c, 50, height - 390, width - 100, box_height)
+    box_height = 230
+    draw_box(c, 50, height - 410, width - 100, box_height)
     c.setFont("Helvetica-Bold", 12)
     c.drawString(60, height - 200, "Resumen de las Evaluaciones")
     headers = ["Indicador", "Actual", "Ultimo", "General", "Clasificacion"]
@@ -92,6 +92,7 @@ def generate_pdf(df, output_filename):
         c.drawString(x, y, header)
         x += 80
         coor_x.append(x)
+    c.line(coor_x[0] - 8, y - 8, coor_x[-1] + 30, y - 8)
     y -= 20
 
     c.setFont("Helvetica", 12)
@@ -101,6 +102,7 @@ def generate_pdf(df, output_filename):
     data.append(
         ["Tiempo", "", f"{diff_days_last.days} dias", f"{diff_days.days} dias", ""]
     )
+
     diff_weight = df["Peso Corporal (Kg)"].iloc[-1] - df["Peso Corporal (Kg)"].iloc[0]
     diff_weight = round(diff_weight, 1)
     diff_weight_last = (
@@ -190,13 +192,17 @@ def generate_pdf(df, output_filename):
     diff_water_last = round(diff_water_last, 1)
     data.append(["Agua (%)", df["Agua (%)"].iloc[-1], diff_water_last, diff_water, ""])
 
+    count = 0
     for d in data:
+        count += 1
         for i in range(0, len(d)):
             c.drawString(
                 coor_x[i],
                 y,
                 str(d[i]),
             )
+        if count < len(data):
+            c.line(coor_x[0] - 8, y - 8, coor_x[-1] + 30, y - 8)
         y -= 20
 
     # Add Graphs
