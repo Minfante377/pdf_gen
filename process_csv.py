@@ -2,9 +2,22 @@ import io
 
 import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen import canvas
+
+sns.set(style="whitegrid")
+plt.rcParams.update(
+    {
+        "font.size": 12,
+        "figure.figsize": (10, 6),
+        "axes.titlesize": 14,
+        "axes.labelsize": 12,
+        "xtick.labelsize": 10,
+        "ytick.labelsize": 10,
+    }
+)
 
 IMC_ADULT = {
     "18.5": "Bajo Peso",
@@ -191,36 +204,59 @@ def generate_pdf(df, output_filename):
         buffer.close()
 
     def plot_grasa(buffer):
-        plt.figure(figsize=(5, 3))
-        plt.plot(df["Fecha"], df["Grasa(%)"], marker="o")
+        plt.figure(figsize=(10, 6))
+        plt.plot(df["Fecha"], df["Grasa(%)"], marker="o", color="tab:blue", linewidth=2)
         plt.title("% Grasa Corporal")
         plt.xlabel("Fecha")
         plt.ylabel("% Grasa")
         plt.xticks(rotation=45)
+        plt.grid(True)
         plt.tight_layout()
         plt.savefig(buffer, format="png")
         plt.close()
 
     def plot_peso(buffer):
-        plt.figure(figsize=(5, 3))
-        plt.plot(df["Fecha"], df["Peso Corporal (Kg)"], marker="o")
+        plt.figure(figsize=(10, 6))
+        plt.plot(
+            df["Fecha"],
+            df["Peso Corporal (Kg)"],
+            marker="o",
+            color="tab:green",
+            linewidth=2,
+        )
         plt.title("Peso Corporal")
         plt.xlabel("Fecha")
         plt.ylabel("Peso (kg)")
         plt.xticks(rotation=45)
+        plt.grid(True)
         plt.tight_layout()
         plt.savefig(buffer, format="png")
         plt.close()
 
     def plot_masa(buffer):
-        plt.figure(figsize=(5, 3))
-        plt.plot(df["Fecha"], df["Masa Magra (%)"], label="Masa Magra (%)", marker="o")
-        plt.plot(df["Fecha"], df["Grasa(%)"], label="Grasa(%)", marker="o")
+        plt.figure(figsize=(10, 6))
+        plt.plot(
+            df["Fecha"],
+            df["Masa Magra (%)"],
+            label="Masa Magra (%)",
+            marker="o",
+            color="tab:orange",
+            linewidth=2,
+        )
+        plt.plot(
+            df["Fecha"],
+            df["Grasa(%)"],
+            label="Grasa(%)",
+            marker="o",
+            color="tab:blue",
+            linewidth=2,
+        )
         plt.title("Masa Magra (%) y Grasa(%)")
         plt.xlabel("Fecha")
         plt.ylabel("%")
         plt.legend()
         plt.xticks(rotation=45)
+        plt.grid(True)
         plt.tight_layout()
         plt.savefig(buffer, format="png")
         plt.close()
@@ -228,8 +264,8 @@ def generate_pdf(df, output_filename):
     def plot_pie(buffer):
         labels = ["Masa Magra", "Masa Grasa"]
         sizes = [df["Masa Magra (%)"].iloc[-1], df["Grasa(%)"].iloc[-1]]
-        colors = ["#ff9999", "#66b3ff"]
-        plt.figure(figsize=(4, 4))
+        colors = sns.color_palette("pastel")
+        plt.figure(figsize=(8, 8))
         plt.pie(sizes, labels=labels, colors=colors, autopct="%1.1f%%", startangle=140)
         plt.axis("equal")
         plt.title("Último Masa Magra (%) vs Grasa(%)")
@@ -238,12 +274,13 @@ def generate_pdf(df, output_filename):
         plt.close()
 
     def plot_agua(buffer):
-        plt.figure(figsize=(5, 3))
-        plt.plot(df["Fecha"], df["Agua (%)"], marker="o")
+        plt.figure(figsize=(10, 6))
+        plt.plot(df["Fecha"], df["Agua (%)"], marker="o", color="tab:cyan", linewidth=2)
         plt.title("% Agua Corporal")
         plt.xlabel("Fecha")
         plt.ylabel("% Agua")
         plt.xticks(rotation=45)
+        plt.grid(True)
         plt.tight_layout()
         plt.savefig(buffer, format="png")
         plt.close()
