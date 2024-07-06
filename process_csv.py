@@ -273,18 +273,6 @@ def generate_pdf(df, output_filename):
         c.drawImage(image, x, y, width=width, height=height)
         buffer.close()
 
-    def plot_grasa(buffer):
-        plt.figure(figsize=(10, 6))
-        plt.plot(df["Fecha"], df["Grasa(%)"], marker="o", color="tab:blue", linewidth=2)
-        plt.title("% Grasa Corporal")
-        plt.xlabel("Fecha")
-        plt.ylabel("% Grasa")
-        plt.xticks(rotation=45)
-        plt.grid(True)
-        plt.tight_layout()
-        plt.savefig(buffer, format="png")
-        plt.close()
-
     def plot_peso(buffer):
         plt.figure(figsize=(10, 6))
         plt.plot(
@@ -330,25 +318,6 @@ def generate_pdf(df, output_filename):
         plt.savefig(buffer, format="png")
         plt.close()
 
-    def plot_pie(buffer):
-        labels = ["Masa Magra", "Masa Grasa"]
-        sizes = [df["Masa Magra (%)"].iloc[-1], df["Grasa(%)"].iloc[-1]]
-        colors = sns.color_palette("pastel")
-        plt.figure(figsize=(8, 8))
-        plt.pie(
-            sizes,
-            labels=labels,
-            colors=colors,
-            autopct="%1.1f%%",
-            startangle=140,
-            wedgeprops={"edgecolor": "black", "linewidth": 3, "antialiased": True},
-        )
-        plt.axis("equal")
-        plt.title("Masa Magra (%) vs Grasa(%)")
-        plt.tight_layout()
-        plt.savefig(buffer, format="png")
-        plt.close()
-
     def plot_agua(buffer):
         plt.figure(figsize=(10, 6))
         plt.plot(df["Fecha"], df["Agua (%)"], marker="o", color="tab:cyan", linewidth=2)
@@ -362,22 +331,18 @@ def generate_pdf(df, output_filename):
         plt.close()
 
     # Position and size for the graphs
-    graph_width = 240
-    graph_height = 120
-    graph_x = 50
+    graph_width = 280
+    graph_height = 200
+    graph_x = 15
 
     # Adjusted positions for multiple graphs
-    graph_y_grasa = height - 550
-    graph_y_peso = height - 550
-    graph_y_masa = height - 670
-    graph_y_pie = height - 700
-    graph_y_agua = height - 790
+    graph_y_peso = height - 610
+    graph_y_masa = height - 810
+    graph_y_agua = height - 810
 
-    add_plot_to_pdf(c, plot_grasa, graph_x, graph_y_grasa, graph_width, graph_height)
-    add_plot_to_pdf(c, plot_peso, width - 300, graph_y_peso, graph_width, graph_height)
+    add_plot_to_pdf(c, plot_peso, width - 450, graph_y_peso, graph_width, graph_height)
     add_plot_to_pdf(c, plot_masa, graph_x, graph_y_masa, graph_width, graph_height)
-    add_plot_to_pdf(c, plot_pie, width - 250, graph_y_pie, 150, 150)
-    add_plot_to_pdf(c, plot_agua, graph_x, graph_y_agua, graph_width, graph_height)
+    add_plot_to_pdf(c, plot_agua, width - 300, graph_y_agua, graph_width, graph_height)
 
     # Save the PDF
     c.showPage()
