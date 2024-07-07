@@ -1,3 +1,4 @@
+import datetime as dt
 import io
 
 import matplotlib.pyplot as plt
@@ -413,7 +414,7 @@ def process_csv(file_path):
     df["IMC"] = df["IMC"].str.replace(",", ".").astype(float)
 
     # Generate PDF for the entire CSV
-    output_filename = "./informe.pdf"
+    output_filename = f"./informe-{dt.date.today().strftime('%d-%m-%Y')}.pdf"
     generate_pdf(df, output_filename)
 
     return output_filename
