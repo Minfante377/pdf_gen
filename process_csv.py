@@ -19,6 +19,7 @@ plt.rcParams.update(
         "axes.grid": True,
         "axes.edgecolor": "0.15",
         "axes.linewidth": 1.25,
+        "date.autoformatter.day": "%d/%m/%Y",
     }
 )
 
@@ -276,15 +277,16 @@ def generate_pdf(df, output_filename):
     def plot_peso(buffer):
         plt.figure(figsize=(10, 6))
         plt.plot(
-            df["Fecha"],
-            df["Peso Corporal (Kg)"],
+            df["Fecha"].to_list(),
+            df["Peso Corporal (Kg)"].to_list(),
             marker="o",
             color="tab:green",
-            linewidth=2,
+            linewidth=3,
         )
         plt.title("Peso Corporal")
         plt.xlabel("Fecha")
         plt.ylabel("Peso (kg)")
+        plt.xticks(df["Fecha"].to_list())
         plt.xticks(rotation=45)
         plt.grid(True)
         plt.tight_layout()
@@ -294,16 +296,16 @@ def generate_pdf(df, output_filename):
     def plot_masa(buffer):
         plt.figure(figsize=(10, 6))
         plt.plot(
-            df["Fecha"],
-            df["Masa Magra (%)"],
+            df["Fecha"].to_list(),
+            df["Masa Magra (%)"].to_list(),
             label="Masa Magra (%)",
             marker="o",
             color="tab:orange",
-            linewidth=2,
+            linewidth=3,
         )
         plt.bar(
-            df["Fecha"],
-            df["Grasa(%)"],
+            df["Fecha"].to_list(),
+            df["Grasa(%)"].to_list(),
             label="Grasa(%)",
             color="tab:blue",
             width=8,
@@ -311,6 +313,7 @@ def generate_pdf(df, output_filename):
         plt.title("Masa Magra (%) y Grasa(%)")
         plt.xlabel("Fecha")
         plt.ylabel("%")
+        plt.xticks(df["Fecha"].to_list())
         plt.legend()
         plt.xticks(rotation=45)
         plt.grid(True)
@@ -320,11 +323,18 @@ def generate_pdf(df, output_filename):
 
     def plot_agua(buffer):
         plt.figure(figsize=(10, 6))
-        plt.plot(df["Fecha"], df["Agua (%)"], marker="o", color="tab:cyan", linewidth=2)
+        plt.plot(
+            df["Fecha"].to_list(),
+            df["Agua (%)"].to_list(),
+            marker="o",
+            color="tab:cyan",
+            linewidth=3,
+        )
         plt.title("% Agua Corporal")
         plt.xlabel("Fecha")
         plt.ylabel("% Agua")
         plt.xticks(rotation=45)
+        plt.xticks(df["Fecha"].to_list())
         plt.grid(True)
         plt.tight_layout()
         plt.savefig(buffer, format="png")
@@ -336,7 +346,7 @@ def generate_pdf(df, output_filename):
     graph_x = 15
 
     # Adjusted positions for multiple graphs
-    graph_y_peso = height - 610
+    graph_y_peso = height - 615
     graph_y_masa = height - 810
     graph_y_agua = height - 810
 
