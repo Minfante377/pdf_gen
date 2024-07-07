@@ -12,8 +12,9 @@ plt.rcParams.update(
     {
         "font.size": 12,
         "figure.figsize": (10, 6),
-        "axes.titlesize": 14,
-        "axes.labelsize": 12,
+        "axes.titlesize": 24,
+        "axes.titleweight": "bold",
+        "axes.labelsize": 16,
         "xtick.labelsize": 10,
         "ytick.labelsize": 10,
         "axes.grid": True,
@@ -160,6 +161,16 @@ def generate_pdf(df, output_filename):
         ]
     )
 
+    data.append(
+        [
+            "IMC",
+            df["IMC"].iloc[-1],
+            diff_imc_last if diff_imc_last < 0 else f"+{diff_imc_last}",
+            diff_imc if diff_imc < 0 else f"+{diff_imc}",
+            imc_classification,
+        ]
+    )
+
     diff_muscle = df["Masa Muscular (Kg)"].iloc[-1] - df["Masa Muscular (Kg)"].iloc[0]
     diff_muscle = round(diff_muscle, 1)
     diff_muscle_last = (
@@ -200,6 +211,40 @@ def generate_pdf(df, output_filename):
         ]
     )
 
+    diff_visceral_fat = df["GV"].iloc[-1] - df["GV"].iloc[0]
+    diff_visceral_fat = round(diff_visceral_fat, 1)
+    diff_visceral_fat_last = df["GV"].iloc[-1] - df["GV"].iloc[-2]
+    diff_visceral_fat_last = round(diff_visceral_fat_last, 1)
+    visceral_fat_classification = get_classification(df["GV"].iloc[-1], GRASA_VISCERAL)
+    data.append(
+        [
+            "GV (%)",
+            df["GV"].iloc[-1],
+            (
+                diff_visceral_fat_last
+                if diff_visceral_fat_last < 0
+                else f"+{diff_visceral_fat_last}"
+            ),
+            diff_visceral_fat if diff_visceral_fat < 0 else f"+{diff_visceral_fat}",
+            visceral_fat_classification,
+        ]
+    )
+
+    diff_water = df["Agua (%)"].iloc[-1] - df["Agua (%)"].iloc[0]
+    diff_water = round(diff_water, 1)
+    diff_water_last = df["Agua (%)"].iloc[-1] - df["Agua (%)"].iloc[-2]
+    diff_water_last = round(diff_water_last, 1)
+    water_classification = get_classification(df["Agua (%)"].iloc[-1], WATER)
+    data.append(
+        [
+            "Agua (%)",
+            df["Agua (%)"].iloc[-1],
+            diff_water_last if diff_water_last < 0 else f"+{diff_water_last}",
+            diff_water if diff_water < 0 else f"+{diff_water}",
+            water_classification,
+        ]
+    )
+
     diff_cc = df["CC"].iloc[-1] - df["CC"].iloc[0]
     diff_cc = round(diff_cc, 1)
     diff_cc_last = df["CC"].iloc[-1] - df["CC"].iloc[-2]
@@ -232,50 +277,6 @@ def generate_pdf(df, output_filename):
         ]
     )
 
-    diff_visceral_fat = df["GV"].iloc[-1] - df["GV"].iloc[0]
-    diff_visceral_fat = round(diff_visceral_fat, 1)
-    diff_visceral_fat_last = df["GV"].iloc[-1] - df["GV"].iloc[-2]
-    diff_visceral_fat_last = round(diff_visceral_fat_last, 1)
-    visceral_fat_classification = get_classification(df["GV"].iloc[-1], GRASA_VISCERAL)
-    data.append(
-        [
-            "GV (%)",
-            df["GV"].iloc[-1],
-            (
-                diff_visceral_fat_last
-                if diff_visceral_fat_last < 0
-                else f"+{diff_visceral_fat_last}"
-            ),
-            diff_visceral_fat if diff_visceral_fat < 0 else f"+{diff_visceral_fat}",
-            visceral_fat_classification,
-        ]
-    )
-
-    data.append(
-        [
-            "IMC",
-            df["IMC"].iloc[-1],
-            diff_imc_last if diff_imc_last < 0 else f"+{diff_imc_last}",
-            diff_imc if diff_imc < 0 else f"+{diff_imc}",
-            imc_classification,
-        ]
-    )
-
-    diff_water = df["Agua (%)"].iloc[-1] - df["Agua (%)"].iloc[0]
-    diff_water = round(diff_water, 1)
-    diff_water_last = df["Agua (%)"].iloc[-1] - df["Agua (%)"].iloc[-2]
-    diff_water_last = round(diff_water_last, 1)
-    water_classification = get_classification(df["Agua (%)"].iloc[-1], WATER)
-    data.append(
-        [
-            "Agua (%)",
-            df["Agua (%)"].iloc[-1],
-            diff_water_last if diff_water_last < 0 else f"+{diff_water_last}",
-            diff_water if diff_water < 0 else f"+{diff_water}",
-            water_classification,
-        ]
-    )
-
     count = 0
     for d in data:
         count += 1
@@ -304,10 +305,11 @@ def generate_pdf(df, output_filename):
             [i for i in range(0, len(df["Fecha"]))],
             df["Peso Corporal (Kg)"].to_list(),
             marker="o",
-            color="tab:green",
-            linewidth=4,
+            color="#435536",
+            linewidth=3,
+            markersize=10,
         )
-        plt.title("Peso Corporal")
+        plt.title("PESO CORPORAL", pad=20)
         plt.xlabel("Fecha")
         plt.ylabel("Peso (kg)")
         plt.xticks(
@@ -326,17 +328,18 @@ def generate_pdf(df, output_filename):
             df["Masa Magra (%)"].to_list(),
             label="Masa Magra (%)",
             marker="o",
-            color="tab:orange",
-            linewidth=4,
+            linewidth=3,
+            markersize=10,
+            color="#364355",
         )
         plt.bar(
             [i for i in range(0, len(df["Fecha"]))],
             df["Grasa(%)"].to_list(),
             label="Grasa(%)",
-            color="tab:blue",
+            color="#ff9c8f",
             width=0.5,
         )
-        plt.title("Masa Magra (%) y Grasa(%)")
+        plt.title("COMPOSICION CORPORAL", pad=20)
         plt.xlabel("Fecha")
         plt.ylabel("%")
         plt.xticks(
@@ -356,9 +359,10 @@ def generate_pdf(df, output_filename):
             df["Agua (%)"].to_list(),
             marker="o",
             color="tab:cyan",
-            linewidth=4,
+            linewidth=3,
+            markersize=10,
         )
-        plt.title("% Agua Corporal")
+        plt.title("AGUA CORPORAL", pad=20)
         plt.xlabel("Fecha")
         plt.ylabel("% Agua")
         plt.xticks(
@@ -376,11 +380,13 @@ def generate_pdf(df, output_filename):
     graph_x = 15
 
     # Adjusted positions for multiple graphs
-    graph_y_peso = height - 615
-    graph_y_masa = height - 810
-    graph_y_agua = height - 810
+    graph_y_peso = height - 630
+    graph_y_masa = height - 845
+    graph_y_agua = height - 845
 
-    add_plot_to_pdf(c, plot_peso, width - 450, graph_y_peso, graph_width, graph_height)
+    add_plot_to_pdf(
+        c, plot_peso, width - 520, graph_y_peso, graph_width * 1.5, graph_height
+    )
     add_plot_to_pdf(c, plot_masa, graph_x, graph_y_masa, graph_width, graph_height)
     add_plot_to_pdf(c, plot_agua, width - 300, graph_y_agua, graph_width, graph_height)
 
