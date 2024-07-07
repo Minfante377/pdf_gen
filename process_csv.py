@@ -154,8 +154,8 @@ def generate_pdf(df, output_filename):
         [
             "Peso (Kg)",
             df["Peso Corporal (Kg)"].iloc[-1],
-            diff_weight_last,
-            diff_weight,
+            diff_weight_last if diff_weight_last < 0 else f"+{diff_weight_last}",
+            diff_weight if diff_weight < 0 else f"+{diff_weight}",
             imc_classification,
         ]
     )
@@ -169,8 +169,8 @@ def generate_pdf(df, output_filename):
         [
             "MM (Kg)",
             df["Masa Muscular (Kg)"].iloc[-1],
-            diff_muscle_last,
-            diff_muscle,
+            diff_muscle_last if diff_muscle_last < 0 else f"+{diff_muscle_last}",
+            diff_muscle if diff_muscle < 0 else f"+{diff_muscle}",
             "",
         ]
     )
@@ -194,8 +194,8 @@ def generate_pdf(df, output_filename):
         [
             "Grasa (%)",
             df["Grasa(%)"].iloc[-1],
-            diff_fat_last,
-            diff_fat,
+            diff_fat_last if diff_fat_last < 0 else f"+{diff_fat_last}",
+            diff_fat if diff_fat < 0 else f"+{diff_fat}",
             fat_classification,
         ]
     )
@@ -209,14 +209,28 @@ def generate_pdf(df, output_filename):
     else:
         cc_classification = get_classification(df["CC"].iloc[-1], CC_WOMEN)
     data.append(
-        ["CC (cm)", df["CC"].iloc[-1], diff_cc_last, diff_cc, cc_classification]
+        [
+            "CC (cm)",
+            df["CC"].iloc[-1],
+            diff_cc_last if diff_cc_last < 0 else f"+{diff_cc_last}",
+            diff_cc if diff_cc < 0 else f"+{diff_cc}",
+            cc_classification,
+        ]
     )
 
     diff_cca = df["CCA"].iloc[-1] - df["CCA"].iloc[0]
     diff_cca = round(diff_cca, 1)
     diff_cca_last = df["CCA"].iloc[-1] - df["CCA"].iloc[-2]
     diff_cca_last = round(diff_cca_last, 1)
-    data.append(["CCA (cm)", df["CCA"].iloc[-1], diff_cca_last, diff_cca, ""])
+    data.append(
+        [
+            "CCA (cm)",
+            df["CCA"].iloc[-1],
+            diff_cca_last if diff_cca_last < 0 else f"+{diff_cca_last}",
+            diff_cca if diff_cca < 0 else f"+{diff_cca}",
+            "",
+        ]
+    )
 
     diff_visceral_fat = df["GV"].iloc[-1] - df["GV"].iloc[0]
     diff_visceral_fat = round(diff_visceral_fat, 1)
@@ -227,14 +241,24 @@ def generate_pdf(df, output_filename):
         [
             "GV (%)",
             df["GV"].iloc[-1],
-            diff_visceral_fat_last,
-            diff_visceral_fat,
+            (
+                diff_visceral_fat_last
+                if diff_visceral_fat_last < 0
+                else f"+{diff_visceral_fat_last}"
+            ),
+            diff_visceral_fat if diff_visceral_fat < 0 else f"+{diff_visceral_fat}",
             visceral_fat_classification,
         ]
     )
 
     data.append(
-        ["IMC", df["IMC"].iloc[-1], diff_imc_last, diff_imc, imc_classification]
+        [
+            "IMC",
+            df["IMC"].iloc[-1],
+            diff_imc_last if diff_imc_last < 0 else f"+{diff_imc_last}",
+            diff_imc if diff_imc < 0 else f"+{diff_imc}",
+            imc_classification,
+        ]
     )
 
     diff_water = df["Agua (%)"].iloc[-1] - df["Agua (%)"].iloc[0]
@@ -246,8 +270,8 @@ def generate_pdf(df, output_filename):
         [
             "Agua (%)",
             df["Agua (%)"].iloc[-1],
-            diff_water_last,
-            diff_water,
+            diff_water_last if diff_water_last < 0 else f"+{diff_water_last}",
+            diff_water if diff_water < 0 else f"+{diff_water}",
             water_classification,
         ]
     )
