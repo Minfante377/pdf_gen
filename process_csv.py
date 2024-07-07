@@ -308,7 +308,7 @@ def generate_pdf(df, output_filename):
             df["Grasa(%)"].to_list(),
             label="Grasa(%)",
             color="tab:blue",
-            width=8,
+            width=3,
         )
         plt.title("Masa Magra (%) y Grasa(%)")
         plt.xlabel("Fecha")
