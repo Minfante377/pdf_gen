@@ -177,6 +177,7 @@ def generate_pdf(df, output_filename):
     diff_muscle_last = (
         df["Masa Muscular (Kg)"].iloc[-1] - df["Masa Muscular (Kg)"].iloc[-2]
     )
+    diff_muscle_last = round(diff_muscle_last, 1)
     data.append(
         [
             "MM (Kg)",
@@ -187,7 +188,6 @@ def generate_pdf(df, output_filename):
         ]
     )
 
-    diff_muscle_last = round(diff_muscle_last, 1)
     diff_fat = df["Grasa(%)"].iloc[-1] - df["Grasa(%)"].iloc[0]
     diff_fat = round(diff_fat, 1)
     diff_fat_last = df["Grasa(%)"].iloc[-1] - df["Grasa(%)"].iloc[-2]
