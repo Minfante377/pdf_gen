@@ -414,7 +414,10 @@ def process_csv(file_path):
     df["IMC"] = df["IMC"].str.replace(",", ".").astype(float)
 
     # Generate PDF for the entire CSV
-    output_filename = f"./informe-{dt.date.today().strftime('%d-%m-%Y')}.pdf"
+    output_filename = (
+        f"./{file_path.rsplit('/', 1)[1].rsplit('.', 1)[0]}"
+        f"-{dt.date.today().strftime('%d-%m-%Y')}.pdf"
+    )
     generate_pdf(df, output_filename)
 
     return output_filename
